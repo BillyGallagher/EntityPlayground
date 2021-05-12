@@ -6,14 +6,14 @@ using System.Collections.Generic;
 
 namespace EntityPlayground
 {
-    public class Game1 : Game
+    public class EntityPlayground : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
         private List<Entity> _entities = new List<Entity>();
 
-        public Game1()
+        public EntityPlayground()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
