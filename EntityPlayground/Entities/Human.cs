@@ -73,7 +73,6 @@ namespace EntityPlayground.Entities
                 {
                     _animationIndex = 0;
                 }
-                Debug.WriteLine(_animationIndex);
                 _animationPlayer.PlayAnimation(_animationOrder[_animationIndex]);
                 _timer = 0;
             }

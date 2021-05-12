@@ -11,7 +11,8 @@ namespace EntityPlayground
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private List<Entity> _entities = new List<Entity>();
+        private World _world;
+
 
         public EntityPlayground()
         {
@@ -22,8 +23,7 @@ namespace EntityPlayground
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            _entities.Add(new Human(new Vector2(100, 100)));
+            _world = new World(Content);
 
             base.Initialize();
         }
@@ -31,8 +31,7 @@ namespace EntityPlayground
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            _entities.ForEach(x => x.LoadContent(Content));
+            _world.LoadWorld();
         }
 
         protected override void Update(GameTime gameTime)
@@ -40,7 +39,7 @@ namespace EntityPlayground
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _entities.ForEach(x => x.Update(gameTime));
+            _world.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -51,7 +50,7 @@ namespace EntityPlayground
 
             _spriteBatch.Begin();
 
-            _entities.ForEach(x => x.Draw(gameTime, _spriteBatch));
+            _world.Draw(gameTime, _spriteBatch);
 
             _spriteBatch.End();
 
