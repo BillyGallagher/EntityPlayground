@@ -51,7 +51,7 @@ namespace EntityPlayground
 
             _spriteBatch.Begin();
 
-            _entities.ForEach(x => x.Draw(_spriteBatch));
+            _entities.ForEach(x => x.Draw(gameTime, _spriteBatch));
 
             _spriteBatch.End();
 

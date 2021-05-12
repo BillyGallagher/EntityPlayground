@@ -15,7 +15,7 @@ namespace EntityPlayground.Entities
         public Entity(Vector2 position) { _position = position; }
 
         public abstract void Update(GameTime gameTime);
-        public abstract void Draw(SpriteBatch spriteBatch);
+        public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
         public abstract void LoadContent(ContentManager contentManager);
     }
 }
