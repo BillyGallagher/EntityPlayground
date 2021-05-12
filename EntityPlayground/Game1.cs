@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EntityPlayground.Entities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace EntityPlayground
 {
@@ -8,6 +10,8 @@ namespace EntityPlayground
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        private List<Entity> _entities = new List<Entity>();
 
         public Game1()
         {
@@ -19,6 +23,7 @@ namespace EntityPlayground
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _entities.Add(new Human(new Vector2(100, 100)));
 
             base.Initialize();
         }
@@ -27,7 +32,7 @@ namespace EntityPlayground
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            _entities.ForEach(x => x.LoadContent(Content));
         }
 
         protected override void Update(GameTime gameTime)
@@ -35,7 +40,7 @@ namespace EntityPlayground
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            _entities.ForEach(x => x.Update(gameTime));
 
             base.Update(gameTime);
         }
@@ -44,7 +49,11 @@ namespace EntityPlayground
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+
+            _entities.ForEach(x => x.Draw(_spriteBatch));
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
