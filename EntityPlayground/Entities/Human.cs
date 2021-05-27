@@ -17,11 +17,18 @@ namespace EntityPlayground.Entities
         private Animation _leftAnimation;
         private Animation _rightAnimation;
 
-        private Animation[] _animationOrder;
-        private int _animationIndex = 0;
         private float _timer;
 
-        public Human(Vector2 position) : base(position) { }
+        private Random rng = new Random();
+
+        private Vector2 _movement;
+        private Vector2 _velocity;
+        private Rectangle _localBounds;
+
+        // Physics constants
+        private const float _maxMoveSpeed = 100.0f;
+
+        public Human(World world, Vector2 position) : base(world, position) { }
 
         public override void LoadContent(ContentManager contentManager)
         {
@@ -54,8 +61,12 @@ namespace EntityPlayground.Entities
             leftTexture.SetData(data);
             _leftAnimation = new Animation(leftTexture, 64, 48, 250, true);
 
-            _animationOrder = new[] { _upAnimation, _rightAnimation, _downAnimation, _leftAnimation };
-            _animationPlayer.PlayAnimation(_animationOrder[_animationIndex]);
+            // Find local bounds within the texture size
+            int width = (int)(_downAnimation.FrameWidth * 0.4);
+            int left = (_downAnimation.FrameWidth - width) / 2;
+            int height = (int)(_downAnimation.FrameHeight * 0.8);
+            int top = _downAnimation.FrameHeight - height;
+            _localBounds = new Rectangle(left, top, width, height);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -66,17 +77,93 @@ namespace EntityPlayground.Entities
         public override void Update(GameTime gameTime)
         {
             _timer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (_timer > 1000)
+            if (_timer > 5000)
             {
-                _animationIndex++;
-                if (_animationIndex == _animationOrder.Length)
-                {
-                    _animationIndex = 0;
-                }
-                Debug.WriteLine(_animationIndex);
-                _animationPlayer.PlayAnimation(_animationOrder[_animationIndex]);
+                MoveInRandomDirection();
+                _velocity = new Vector2(0, 0);
                 _timer = 0;
             }
+
+            Animation animation;
+            if (_velocity.X > 0) { animation = _rightAnimation; }
+            else if (_velocity.X < 0) { animation = _leftAnimation; }
+            else if (_velocity.Y < 0) { animation = _upAnimation; }
+            else { animation = _downAnimation; } // TODO: Add idle animation, for now use "down" animation
+            _animationPlayer.PlayAnimation(animation);
+
+            ApplyPhysics(gameTime);
+        }
+
+        private void MoveInRandomDirection()
+        {
+            var random = rng.Next(0, 4);
+            var direction = (EntityDirection)random;
+
+            switch (direction)
+            {
+                case EntityDirection.Up:
+                    _movement.X = 0;
+                    _movement.Y = -1;
+                    break;
+                case EntityDirection.Right:
+                    _movement.X = 1;
+                    _movement.Y = 0;
+                    break;
+                case EntityDirection.Down:
+                    _movement.X = 0;
+                    _movement.Y = 1;
+                    break;
+                case EntityDirection.Left:
+                    _movement.X = -1;
+                    _movement.Y = 0;
+                    break;
+            }
+        }
+
+        public override void ApplyPhysics(GameTime gameTime)
+        {
+            float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            _velocity.X += _movement.X * _maxMoveSpeed;
+            _velocity.Y += _movement.Y * _maxMoveSpeed;
+            _velocity.X = MathHelper.Clamp(_velocity.X, -_maxMoveSpeed, _maxMoveSpeed);
+            _velocity.Y = MathHelper.Clamp(_velocity.Y, -_maxMoveSpeed, _maxMoveSpeed);
+
+            var newPosition = _position + _velocity * elapsedTime;
+            newPosition = UpdatePositionForCollisions(newPosition);
+
+            _position = newPosition;
+        }
+
+        private Vector2 UpdatePositionForCollisions(Vector2 potentialPosition) 
+        {
+            var newBounds = new Rectangle(
+                (int)potentialPosition.X + _localBounds.Left,
+                (int)potentialPosition.Y + _localBounds.Top,
+                _localBounds.Width,
+                _localBounds.Height);
+
+            if (!_world.Bounds.Contains(newBounds))
+            {
+                if (newBounds.Left < _world.Bounds.Left)
+                {
+                    potentialPosition.X = _world.Bounds.Left - _localBounds.Left;
+                }
+                if (newBounds.Right >= _world.Bounds.Right)
+                {
+                    potentialPosition.X = _world.Bounds.Right - _localBounds.Right;
+                }
+                if (potentialPosition.Y <= _world.Bounds.Top)
+                {
+                    potentialPosition.Y = _world.Bounds.Top - _localBounds.Top;
+                }
+                if (newBounds.Bottom >= _world.Bounds.Bottom)
+                {
+                    potentialPosition.Y = _world.Bounds.Bottom - _localBounds.Bottom;
+                }
+            }
+
+            return potentialPosition;
         }
     }
 }

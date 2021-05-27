@@ -11,10 +11,15 @@ namespace EntityPlayground.Entities
     {
         protected Texture2D _texture;
         protected Vector2 _position;
+        protected World _world;
 
-        public Entity(Vector2 position) { _position = position; }
+        public Entity(World world, Vector2 position) {
+            _world = world;
+            _position = position;
+        }
 
         public abstract void Update(GameTime gameTime);
+        public abstract void ApplyPhysics(GameTime gameTime);
         public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
         public abstract void LoadContent(ContentManager contentManager);
     }
