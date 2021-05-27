@@ -6,8 +6,16 @@ using System.Text;
 
 namespace EntityPlayground.Core
 {
+    // TODO: Fix only showing two of three frames
     public class AnimationPlayer
     {
+        /// <summary>
+        /// Return the origin of the texture at the bottom center of the frame
+        /// </summary>
+        public Vector2 Origin
+        {
+            get { return new Vector2(_animation.FrameWidth / 2.0f, _animation.FrameHeight); }
+        }
         private Animation _animation;
         private int _frameIndex;
         private float _timer;
@@ -18,6 +26,7 @@ namespace EntityPlayground.Core
 
         public void PlayAnimation(Animation animation)
         {
+            if (_animation == animation) { return; } // Don't restart animation if it's already playing
             _animation = animation;
             _frameIndex = 0;
             _timer = 0;

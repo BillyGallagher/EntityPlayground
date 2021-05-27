@@ -23,6 +23,10 @@ namespace EntityPlayground
 
         protected override void Initialize()
         {
+            _graphics.PreferredBackBufferWidth = 1000;
+            _graphics.PreferredBackBufferHeight = 800;
+            _graphics.ApplyChanges();
+
             _world = new World(Content);
 
             base.Initialize();

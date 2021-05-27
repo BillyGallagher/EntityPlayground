@@ -13,6 +13,8 @@ namespace EntityPlayground
         private ContentManager _contentManager;
         private List<Entity> _entities = new List<Entity>();
 
+        public Rectangle Bounds;
+
         public World(ContentManager contentManager)
         {
             _contentManager = contentManager;
@@ -20,7 +22,8 @@ namespace EntityPlayground
 
         public void LoadWorld()
         {
-            _entities.Add(new Human(new Vector2(100, 100)));
+            Bounds = new Rectangle(0, 0, 1000, 800);
+            _entities.Add(new Human(this, new Vector2(500, 400)));
 
             _entities.ForEach(x => x.LoadContent(_contentManager));
         }
