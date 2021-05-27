@@ -62,7 +62,7 @@ namespace EntityPlayground.Entities
             _leftAnimation = new Animation(leftTexture, 64, 48, 250, true);
 
             // Find local bounds within the texture size
-            int width = (int)(_downAnimation.FrameWidth * 0.4);
+            int width = (int)(_downAnimation.FrameWidth * 0.6);
             int left = (_downAnimation.FrameWidth - width) / 2;
             int height = (int)(_downAnimation.FrameHeight * 0.8);
             int top = _downAnimation.FrameHeight - height;
