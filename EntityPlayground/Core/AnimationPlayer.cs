@@ -21,7 +21,7 @@ namespace EntityPlayground.Core
         {
             if (_animation == animation) { return; } // Don't restart animation if it's already playing
             _animation = animation;
-            _frameIndex = 0;
+            _frameIndex = 1;
             _timer = 0;
         }
 
@@ -33,8 +33,23 @@ namespace EntityPlayground.Core
             {
                 _timer -= _animation.FrameTime;
 
-                _leftToRight = _frameIndex == 0 ? true : false;
-                _frameIndex = _leftToRight ? _frameIndex + 1 : _frameIndex - 1;
+                if (_frameIndex == 2)
+                {
+                    _leftToRight = false;
+                }
+                else if (_frameIndex == 0)
+                {
+                    _leftToRight = true;
+                }
+
+                if (_leftToRight)
+                {
+                    _frameIndex++;
+                }
+                else
+                {
+                    _frameIndex--;
+                }
             }
 
             Rectangle source = new Rectangle(_frameIndex * _animation.FrameWidth, 0, _animation.FrameWidth, _animation.FrameHeight);
